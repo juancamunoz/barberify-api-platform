@@ -1,0 +1,7 @@
+App\Entity\Schedule:
+  Schedule-0:
+    __construct:
+      enterprise: '@Enterprise-0'
+      dateFrom: '<dateTimeBetween("-50 days", "now")>'
+      dateTo: '<dateTimeBetween("0 days", "now")>'
+      intervalTime: 30

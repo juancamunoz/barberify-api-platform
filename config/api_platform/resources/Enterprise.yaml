@@ -1,0 +1,48 @@
+App\Entity\Enterprise:
+  attributes:
+    normalization_context:
+      groups: [enterprise_read]
+  collectionOperations:
+    post:
+      method: POST
+      security: is_granted("ENTERPRISE_CREATE")
+      path: /enterprises/create
+      denormalization_context:
+        groups: [enterprise_create]
+      openapi_context:
+        summary: Creates a new enterprise
+    upload_avatar:
+      method: POST
+      path: /enterprises/{id}/avatar
+      controller: App\Api\Action\Enterprise\UploadAvatar
+      deserialize: false
+      openapi_context:
+        summary: Updates the enterprise avatar
+        requestBody:
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  avatar:
+                    type: string
+                    format: binary
+  itemOperations:
+    get:
+      method: GET
+      security: is_granted("ENTERPRISE_READ", object)
+    put:
+      method: PUT
+      security: is_granted("ENTERPRISE_UPDATE", object)
+      denormalization_context:
+        groups: [enterprise_update]
+    delete:
+      method: DELETE
+      security: is_granted("ENTERPRISE_DELETE", object)
+  properties:
+    schedules:
+      subresource:
+        resourceClass: App\Entity\Schedule
+        collection: true
+        maxDepth: 1
+  

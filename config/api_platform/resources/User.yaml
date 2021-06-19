@@ -1,0 +1,58 @@
+App\Entity\User:
+  attributes:
+    normalization_context:
+      groups: [user_read]
+  collectionOperations:
+    register_user:
+      method: POST
+      path: /users/register
+      controller: App\Api\Action\User\Register
+      denormalization_context:
+        groups: [user_register]
+      openapi_context:
+        summary: Register a user in the API
+    login_user:
+      method: POST
+      route_name: api_login_check
+      denormalization_context:
+        groups: [user_post]
+      openapi_context:
+        summary: Login a user in the API
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+  itemOperations:
+    get:
+      method: GET
+      security: is_granted("USER_READ", object)
+    put:
+      method: PUT
+      security: is_granted("USER_UPDATE", object)
+      denormalization_context:
+        groups: [user_update]
+    delete:
+      method: DELETE
+      security: is_granted("USER_DELETE", object)
+  properties:
+    enterprises:
+      subresource:
+        resourceClass: App\Entity\Enterprise
+        collection: true
+        maxDepth: 1

@@ -1,0 +1,19 @@
+App\Entity\Appointment:
+  attributes:
+    id:
+      groups: [appointment_read]
+    owner:
+      groups: [appointment_read, appointment_create]
+    enterprise:
+      groups: [appointment_read, appointment_create]
+    schedule:
+      groups: [appointment_read, appointment_create]
+    date:
+      groups: [appointment_read, appointment_create]
+    duration:
+      groups: [appointment_read, appointment_create]
+    createdAt:
+      groups: [appointment_read]
+    updatedAt:
+      groups: [appointment_read]
+

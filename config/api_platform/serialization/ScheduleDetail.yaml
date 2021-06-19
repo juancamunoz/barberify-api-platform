@@ -1,0 +1,12 @@
+App\Entity\ScheduleDetail:
+  attributes:
+    id:
+      groups: [scheduleDetail_read]
+    schedule:
+      groups: [scheduleDetail_read, scheduleDetail_create]
+    day:
+      groups: [scheduleDetail_read, scheduleDetail_create]
+    startHour:
+      groups: [scheduleDetail_read, scheduleDetail_create, scheduleDetail_update]
+    endHour:
+      groups: [scheduleDetail_read, scheduleDetail_create, scheduleDetail_update]

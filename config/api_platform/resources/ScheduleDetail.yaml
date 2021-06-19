@@ -1,0 +1,25 @@
+App\Entity\ScheduleDetail:
+  attributes:
+    normalization_context:
+      groups: [scheduleDetail_read]
+  collectionOperations:
+    post:
+      method: POST
+      security: is_granted("SCHEDULE_DETAIL_CREATE")
+      path: /schedule_details/create
+      denormalization_context:
+        groups: [scheduleDetail_create]
+      openapi_context:
+        summary: Creates a new schedule detail
+  itemOperations:
+    get:
+      method: GET
+      security: is_granted("SCHEDULE_DETAIL_READ", object)
+    put:
+      method: PUT
+      security: is_granted("SCHEDULE_DETAIL_UPDATE", object)
+      denormalization_context:
+        groups: [scheduleDetail_update]
+    delete:
+      method: DELETE
+      security: is_granted("SCHEDULE_DETAIL_DELETE", object)

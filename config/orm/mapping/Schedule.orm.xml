@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <entity name="App\Entity\Schedule" table="schedule">
+        <id name="id" type="string" length="36" />
+
+        <field name="dateFrom" type="datetime" />
+        <field name="dateTo" type="datetime" />
+        <field name="intervalTime" type="integer" />
+
+        <many-to-one field="enterprise" target-entity="App\Entity\Enterprise" inversed-by="schedules" />
+
+        <one-to-many field="details" target-entity="App\Entity\ScheduleDetail" mapped-by="schedule">
+            <cascade>
+                <cascade-remove />
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="freeAppointments" target-entity="App\Entity\FreeAppointment" mapped-by="schedule">
+            <cascade>
+                <cascade-remove />
+            </cascade>
+        </one-to-many>
+
+
+    </entity>
+</doctrine-mapping>

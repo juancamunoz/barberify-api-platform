@@ -1,0 +1,11 @@
+App\Entity\Enterprise:
+  Enterprise-0:
+    __construct:
+      name: enterprise 1
+      location: location 1
+      owner: '@User-1'
+  Enterprise-1:
+    __construct:
+      name: enterprise 2
+      location: location 2
+      owner: '@User-3'

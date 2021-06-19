@@ -1,0 +1,36 @@
+App\Entity\Appointment:
+  attributes:
+    normalization_context:
+      groups: [appointment_read]
+  collectionOperations:
+    post:
+      method: POST
+      path: /appointments/create
+      controller: App\Api\Action\Appointment\Create
+      deserialize: false
+      openapi_context:
+        summary: Creates a new appointment
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                    required: true
+                  enterprise:
+                    type: string
+                    required: true
+                  schedule:
+                    type: string
+                    required: true
+                  date:
+                    type: datetime
+                    required: true
+                  duration:
+                    type: integer
+                    required: true
+  itemOperations:
+    get:
+      method: GET

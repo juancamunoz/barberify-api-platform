@@ -1,0 +1,12 @@
+App\Entity\Schedule:
+  attributes:
+    id:
+      groups: [schedule_read]
+    enterprise:
+      groups: [schedule_read, schedule_create]
+    dateFrom:
+      groups: [schedule_read, schedule_create, schedule_update]
+    dateTo:
+      groups: [schedule_read, schedule_create, schedule_update]
+    intervalTime:
+      groups: [schedule_read, schedule_create, schedule_update]

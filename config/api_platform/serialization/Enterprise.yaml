@@ -1,0 +1,12 @@
+App\Entity\Enterprise:
+  attributes:
+    id:
+      groups: [enterprise_read]
+    name:
+      groups: [enterprise_read, enterprise_update, enterprise_create]
+    location:
+      groups: [enterprise_read, enterprise_update, enterprise_create]
+    owner:
+      groups: [enterprise_read, enterprise_create]
+    avatar:
+      groups: [enterprise_read]

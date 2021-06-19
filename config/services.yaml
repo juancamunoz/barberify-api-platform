@@ -1,0 +1,40 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+        bind:
+            $roleValidators: !tagged app.role_validator
+            $host:           '%env(HOST)%'
+            $defaultSender:  '%env(MAILER_DEFAULT_SENDER)%'
+            $mediaPath:      '%env(SUBDOMAIN)%'
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    App\Api\:
+        resource: '../src/Api'
+        tags: ['controller.service_arguments']
+
+    App\Api\Listener\JsonExceptionResponseTransformerListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 100 }
+
+    app.images.s3:
+        class: Aws\S3\S3Client
+        arguments:
+            - version: '%env(resolve:VERSION)%'
+              region: '%env(resolve:REGION)%'
+              endpoint: '%env(resolve:ENDPOINT)%'
+              credentials:
+                  key: '%env(resolve:KEY)%'
+                  secret: '%env(resolve:SECRET)%'
+
+    _instanceof:
+        App\Api\Listener\PreWrite\PreWriteListener:
+            tags:
+                - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 33 }
+
+        App\Security\Validator\Role\RoleValidator:
+            tags: [ 'app.role_validator' ]

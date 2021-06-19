@@ -1,0 +1,31 @@
+App\Entity\Schedule:
+  attributes:
+    normalization_context:
+      groups: [schedule_read]
+  collectionOperations:
+    post:
+      method: POST
+      security: is_granted("SCHEDULE_CREATE")
+      path: /schedules/create
+      denormalization_context:
+        groups: [schedule_create]
+      openapi_context:
+        summary: Creates a new schedule
+  itemOperations:
+    get:
+      method: GET
+      security: is_granted("SCHEDULE_READ", object)
+    put:
+      method: PUT
+      security: is_granted("SCHEDULE_UPDATE", object)
+      denormalization_context:
+        groups: [schedule_update]
+    delete:
+      method: DELETE
+      security: is_granted("SCHEDULE_DELETE", object)
+  properties:
+    details:
+      subresource:
+        resourceClass: App\Entity\ScheduleDetail
+        collection: true
+        maxDepth: 1
