@@ -100,6 +100,11 @@ class TestBase extends WebTestCase
         return $this->initDbConnection()->query('SELECT id FROM user WHERE email = "user@api.com"')->fetchColumn(0);
     }
 
+    protected function getPeterId()
+    {
+        return $this->initDbConnection()->query('SELECT id FROM user WHERE email = "peter@api.com"')->fetchColumn(0);
+    }
+
     protected function getUserEnterpriseId()
     {
         return $this->initDbConnection()->query('SELECT id FROM enterprise WHERE name = "enterprise 1"')->fetchColumn(0);
@@ -107,7 +112,7 @@ class TestBase extends WebTestCase
 
     protected function getUserEnterpriseScheduleId()
     {
-        return $this->initDbConnection()->query('SELECT id FROM schedule WHERE interval_time = 10')->fetchColumn(0);
+        return $this->initDbConnection()->query('SELECT id FROM schedule WHERE interval_time = 30')->fetchColumn(0);
     }
 
     protected function getUserEnterpriseScheduleDetailId()

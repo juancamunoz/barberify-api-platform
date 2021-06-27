@@ -63,11 +63,11 @@ class FreeAppointmentService
     {
         $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
         $dayName = strtolower($date->format('l'));
+        $testing = 1;
 
         foreach($this->getDayScheduleDetails($schedule, $date, $dayName) as $scheduleDetail){
             for($i = $scheduleDetail->getStartHour(); $i<$scheduleDetail->getEndHour();){
                 $endHour = (clone $i)->add($dateInterval);
-
                 $freeAppointment = new FreeAppointment(
                     $schedule,
                     $date,
@@ -75,7 +75,7 @@ class FreeAppointmentService
                     $endHour
                 );
                 $this->entityManager->persist($freeAppointment);
-
+                $testing++;
                 $i->add($dateInterval);
             }
         }
@@ -94,6 +94,7 @@ class FreeAppointmentService
 
     private function getDayScheduleDetails(Schedule $schedule, \DateTime $date, string $dayName): Collection
     {
+        $this->entityManager->refresh($schedule);
         return $schedule->getDetails()->filter(function (ScheduleDetail $currentSchedule) use ($date, $dayName) {
             return $currentSchedule->getDay() === $dayName;
         });

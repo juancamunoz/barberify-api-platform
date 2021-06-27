@@ -7,6 +7,8 @@ namespace App\Api\Action\Appointment;
 use App\Entity\Appointment;
 use App\Service\Appointment\CreateAppointmentService;
 use App\Service\Request\RequestService;
+use App\Value\Date;
+use App\Value\Number;
 use Symfony\Component\HttpFoundation\Request;
 
 class Create
@@ -24,8 +26,8 @@ class Create
             RequestService::getField($request, 'owner'),
             RequestService::getField($request, 'enterprise'),
             RequestService::getField($request, 'schedule'),
-            new \DateTime(RequestService::getField($request, 'date')),
-            RequestService::getField($request, 'duration'),
+            new Date(RequestService::getField($request, 'date')),
+            (new Number(RequestService::getField($request, 'duration')))->getNumber(),
         );
     }
 }

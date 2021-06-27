@@ -10,6 +10,7 @@ use App\Repository\EnterpriseRepository;
 use App\Repository\ScheduleRepository;
 use App\Repository\UserRepository;
 use App\Service\FreeAppointment\FreeAppointmentService;
+use App\Value\Date;
 
 class CreateAppointmentService
 {
@@ -34,22 +35,22 @@ class CreateAppointmentService
         $this->appointmentRepository = $appointmentRepository;
     }
 
-    public function create(string $userId, string $enterpriseId, string $scheduleId, \DateTime $date, int $duration): Appointment
+    public function create(string $userId, string $enterpriseId, string $scheduleId, Date $date, int $duration): Appointment
     {
         $user = $this->userRepository->findOneByIdOrFail($userId);
         $enterprise = $this->enterpriseRepository->findOneByIdOrFail($enterpriseId);
         $schedule = $this->scheduleRepository->findOneByIdAndEnterpriseIdOrFail($scheduleId, $enterprise->getId());
 
-        $freeAppointments[] = $this->freeAppointmentService->getAvailableAppointment($date, $schedule);
+        $freeAppointments[] = $this->freeAppointmentService->getAvailableAppointment($date->getValue(), $schedule);
 
         $nextFreeAppointments = ceil($duration/$schedule->getIntervalTime());
 
         for($i=1; $i<$nextFreeAppointments; $i++){
             $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
-            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail((clone $date)->add($dateInterval), $schedule);
+            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail((clone $date->getValue())->add($dateInterval), $schedule);
         }
 
-        $appointment = new Appointment($user, $enterprise, $schedule, $date, $duration);
+        $appointment = new Appointment($user, $enterprise, $schedule, $date->getValue(), $duration);
         $this->appointmentRepository->save($appointment);
 
         $this->freeAppointmentService->delete($freeAppointments);
