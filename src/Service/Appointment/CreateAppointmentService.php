@@ -62,8 +62,9 @@ class CreateAppointmentService
         $freeAppointments[] = $this->freeAppointmentService->getFirstAvailableAppointment($date->getValue(), $schedule);
 
         for ($i = 1; $i < $this->numberOfNextAppointmentsNeeded($duration, $schedule); $i++) {
-            $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
-            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail((clone $date->getValue())->add($dateInterval), $schedule);
+            $firstAppointmentStartHour = clone $date->getValue();
+            $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
+            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail($firstAppointmentStartHour->add($minutesToAdd), $schedule);
         }
         return $freeAppointments;
     }
