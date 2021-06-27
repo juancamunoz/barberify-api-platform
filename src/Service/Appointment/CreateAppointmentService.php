@@ -5,6 +5,7 @@ namespace App\Service\Appointment;
 
 
 use App\Entity\Appointment;
+use App\Entity\Schedule;
 use App\Repository\AppointmentRepository;
 use App\Repository\EnterpriseRepository;
 use App\Repository\ScheduleRepository;
@@ -41,14 +42,7 @@ class CreateAppointmentService
         $enterprise = $this->enterpriseRepository->findOneByIdOrFail($enterpriseId);
         $schedule = $this->scheduleRepository->findOneByIdAndEnterpriseIdOrFail($scheduleId, $enterprise->getId());
 
-        $freeAppointments[] = $this->freeAppointmentService->getAvailableAppointment($date->getValue(), $schedule);
-
-        $nextFreeAppointments = ceil($duration/$schedule->getIntervalTime());
-
-        for($i=1; $i<$nextFreeAppointments; $i++){
-            $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
-            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail((clone $date->getValue())->add($dateInterval), $schedule);
-        }
+        $freeAppointments = $this->getFreeAppointments($duration, $schedule, $date);
 
         $appointment = new Appointment($user, $enterprise, $schedule, $date->getValue(), $duration);
         $this->appointmentRepository->save($appointment);
@@ -56,5 +50,21 @@ class CreateAppointmentService
         $this->freeAppointmentService->delete($freeAppointments);
 
         return $appointment;
+    }
+
+    private function numberOfNextAppointmentsNeeded(int $duration, Schedule $schedule): int
+    {
+        return ceil($duration / $schedule->getIntervalTime());
+    }
+
+    private function getFreeAppointments(int $duration, Schedule $schedule, Date $date): array
+    {
+        $freeAppointments[] = $this->freeAppointmentService->getFirstAvailableAppointment($date->getValue(), $schedule);
+
+        for ($i = 1; $i < $this->numberOfNextAppointmentsNeeded($duration, $schedule); $i++) {
+            $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
+            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail((clone $date->getValue())->add($dateInterval), $schedule);
+        }
+        return $freeAppointments;
     }
 }

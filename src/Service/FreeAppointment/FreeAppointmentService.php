@@ -34,7 +34,7 @@ class FreeAppointmentService
         return $this->freeAppointmentRepository->findAllByDateAndSchedule($date, $schedule->getId());
     }
 
-    public function getAvailableAppointment(\DateTime $date, Schedule $schedule): FreeAppointment
+    public function getFirstAvailableAppointment(\DateTime $date, Schedule $schedule): FreeAppointment
     {
         $this->checkIfFreeAppointmentAndCreate($date, $schedule);
 
