@@ -52,20 +52,20 @@ class CreateAppointmentService
         return $appointment;
     }
 
-    private function numberOfNextAppointmentsNeeded(int $duration, Schedule $schedule): int
-    {
-        return ceil($duration / $schedule->getIntervalTime());
-    }
-
     private function getFreeAppointments(int $duration, Schedule $schedule, Date $date): array
     {
         $freeAppointments[] = $this->freeAppointmentService->getFirstAvailableAppointment($date->getValue(), $schedule);
 
         for ($i = 1; $i < $this->numberOfNextAppointmentsNeeded($duration, $schedule); $i++) {
-            $firstAppointmentStartHour = clone $date->getValue();
+            $requestedAppointmentStartHour = clone $date->getValue();
             $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
-            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail($firstAppointmentStartHour->add($minutesToAdd), $schedule);
+            $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail($requestedAppointmentStartHour->add($minutesToAdd), $schedule);
         }
         return $freeAppointments;
+    }
+
+    private function numberOfNextAppointmentsNeeded(int $duration, Schedule $schedule): int
+    {
+        return ceil($duration / $schedule->getIntervalTime());
     }
 }

@@ -61,28 +61,29 @@ class FreeAppointmentService
 
     private function createAllFreeAppointments(\DateTime $date, Schedule $schedule): void
     {
-        $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
-        $dayName = strtolower($date->format('l'));
-
-        foreach($this->getScheduleDetailsByDayName($schedule, $date, $dayName) as $scheduleDetail){
-            $this->iterateAndAddFreeAppointment($scheduleDetail, $dateInterval, $schedule, $date);
+        foreach($this->getScheduleDetailsByDayName($schedule, $date) as $scheduleDetail){
+            $this->iterateAndAddFreeAppointment($scheduleDetail, $schedule, $date);
         }
         $this->entityManager->flush();
     }
 
 
-    private function getScheduleDetailsByDayName(Schedule $schedule, \DateTime $date, string $dayName): Collection
+    private function getScheduleDetailsByDayName(Schedule $schedule, \DateTime $date): Collection
     {
         $this->entityManager->refresh($schedule);
+        $dayName = strtolower($date->format('l'));
+
         return $schedule->getDetails()->filter(function (ScheduleDetail $currentSchedule) use ($date, $dayName) {
             return $currentSchedule->getDay() === $dayName;
         });
     }
 
-    private function iterateAndAddFreeAppointment($scheduleDetail, \DateInterval $dateInterval, Schedule $schedule, \DateTime $date): void
+    private function iterateAndAddFreeAppointment($scheduleDetail, Schedule $schedule, \DateTime $date): void
     {
+        $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
+
         for ($startHour = $scheduleDetail->getStartHour(); $startHour < $scheduleDetail->getEndHour();) {
-            $endHour = (clone $startHour)->add($dateInterval);
+            $endHour = (clone $startHour)->add($minutesToAdd);
             $freeAppointment = new FreeAppointment(
                 $schedule,
                 $date,
@@ -90,7 +91,7 @@ class FreeAppointmentService
                 $endHour
             );
             $this->entityManager->persist($freeAppointment);
-            $startHour->add($dateInterval);
+            $startHour->add($minutesToAdd);
         }
     }
 }
