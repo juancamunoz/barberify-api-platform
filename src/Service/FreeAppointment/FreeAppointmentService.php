@@ -24,16 +24,6 @@ class FreeAppointmentService
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return array|FreeAppointment[] $date
-     */
-    public function get(\DateTime $date, Schedule $schedule): array
-    {
-        $this->checkIfFreeAppointmentAndCreate($date, $schedule);
-
-        return $this->freeAppointmentRepository->findAllByDateAndSchedule($date, $schedule->getId());
-    }
-
     public function getFirstAvailableAppointment(\DateTime $date, Schedule $schedule): FreeAppointment
     {
         $this->checkIfFreeAppointmentAndCreate($date, $schedule);
@@ -59,28 +49,6 @@ class FreeAppointmentService
         $this->entityManager->flush();
     }
 
-    private function createAllFreeAppointments(\DateTime $date, Schedule $schedule): void
-    {
-        $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
-        $dayName = strtolower($date->format('l'));
-        $testing = 1;
-
-        foreach($this->getDayScheduleDetails($schedule, $date, $dayName) as $scheduleDetail){
-            for($i = $scheduleDetail->getStartHour(); $i<$scheduleDetail->getEndHour();){
-                $endHour = (clone $i)->add($dateInterval);
-                $freeAppointment = new FreeAppointment(
-                    $schedule,
-                    $date,
-                    clone $i,
-                    $endHour
-                );
-                $this->entityManager->persist($freeAppointment);
-                $testing++;
-                $i->add($dateInterval);
-            }
-        }
-        $this->entityManager->flush();
-    }
 
     private function checkIfFreeAppointmentAndCreate(\DateTime $date, Schedule $schedule): void
     {
@@ -91,12 +59,38 @@ class FreeAppointmentService
         }
     }
 
+    private function createAllFreeAppointments(\DateTime $date, Schedule $schedule): void
+    {
+        $dateInterval = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
+        $dayName = strtolower($date->format('l'));
 
-    private function getDayScheduleDetails(Schedule $schedule, \DateTime $date, string $dayName): Collection
+        foreach($this->getScheduleDetailsByDayName($schedule, $date, $dayName) as $scheduleDetail){
+            $this->iterateAndAddFreeAppointment($scheduleDetail, $dateInterval, $schedule, $date);
+        }
+        $this->entityManager->flush();
+    }
+
+
+    private function getScheduleDetailsByDayName(Schedule $schedule, \DateTime $date, string $dayName): Collection
     {
         $this->entityManager->refresh($schedule);
         return $schedule->getDetails()->filter(function (ScheduleDetail $currentSchedule) use ($date, $dayName) {
             return $currentSchedule->getDay() === $dayName;
         });
+    }
+
+    private function iterateAndAddFreeAppointment($scheduleDetail, \DateInterval $dateInterval, Schedule $schedule, \DateTime $date): void
+    {
+        for ($startHour = $scheduleDetail->getStartHour(); $startHour < $scheduleDetail->getEndHour();) {
+            $endHour = (clone $startHour)->add($dateInterval);
+            $freeAppointment = new FreeAppointment(
+                $schedule,
+                $date,
+                clone $startHour,
+                $endHour
+            );
+            $this->entityManager->persist($freeAppointment);
+            $startHour->add($dateInterval);
+        }
     }
 }

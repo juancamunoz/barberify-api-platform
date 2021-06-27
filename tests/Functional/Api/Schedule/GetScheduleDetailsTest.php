@@ -16,7 +16,7 @@ class GetScheduleDetailsTest extends ScheduleTestBase
         $responseData = $this->getResponseData($response);
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertCount(2, $responseData['hydra:member']);
+        $this->assertCount(1, $responseData['hydra:member']);
     }
 
     public function testGetScheduleDetailsForAnotherUser(): void
