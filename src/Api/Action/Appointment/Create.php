@@ -4,6 +4,7 @@
 namespace App\Api\Action\Appointment;
 
 
+use App\Api\DTO\CreateAppointmentDTO;
 use App\Entity\Appointment;
 use App\Service\Appointment\CreateAppointmentService;
 use App\Service\Request\RequestService;
@@ -20,14 +21,14 @@ class Create
         $this->createAppointmentService = $createAppointmentService;
     }
 
-    public function __invoke(Request $request): Appointment
+    public function __invoke(CreateAppointmentDTO $createAppointmentDTO): Appointment
     {
         return $this->createAppointmentService->create(
-            RequestService::getField($request, 'owner'),
-            RequestService::getField($request, 'enterprise'),
-            RequestService::getField($request, 'schedule'),
-            new Date(RequestService::getField($request, 'date')),
-            (new Number(RequestService::getField($request, 'duration')))->getNumber(),
+            $createAppointmentDTO->getOwnerId(),
+            $createAppointmentDTO->getEnterpriseId(),
+            $createAppointmentDTO->getScheduleId(),
+            $createAppointmentDTO->getDate(),
+            $createAppointmentDTO->getDuration()
         );
     }
 }

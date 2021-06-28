@@ -36,7 +36,7 @@ class CreateAppointmentService
         $this->appointmentRepository = $appointmentRepository;
     }
 
-    public function create(string $userId, string $enterpriseId, string $scheduleId, Date $date, int $duration): Appointment
+    public function create(string $userId, string $enterpriseId, string $scheduleId, \DateTime $date, int $duration): Appointment
     {
         $user = $this->userRepository->findOneByIdOrFail($userId);
         $enterprise = $this->enterpriseRepository->findOneByIdOrFail($enterpriseId);
@@ -44,7 +44,7 @@ class CreateAppointmentService
 
         $freeAppointments = $this->getFreeAppointments($duration, $schedule, $date);
 
-        $appointment = new Appointment($user, $enterprise, $schedule, $date->getValue(), $duration);
+        $appointment = new Appointment($user, $enterprise, $schedule, $date, $duration);
         $this->appointmentRepository->save($appointment);
 
         $this->freeAppointmentService->delete($freeAppointments);
@@ -52,12 +52,12 @@ class CreateAppointmentService
         return $appointment;
     }
 
-    private function getFreeAppointments(int $duration, Schedule $schedule, Date $date): array
+    private function getFreeAppointments(int $duration, Schedule $schedule, \DateTime $date): array
     {
-        $freeAppointments[] = $this->freeAppointmentService->getFirstAvailableAppointment($date->getValue(), $schedule);
+        $freeAppointments[] = $this->freeAppointmentService->getFirstAvailableAppointment($date, $schedule);
 
         for ($i = 1; $i < $this->numberOfNextAppointmentsNeeded($duration, $schedule); $i++) {
-            $requestedAppointmentStartHour = clone $date->getValue();
+            $requestedAppointmentStartHour = clone $date;
             $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() * $i . 'M');
             $freeAppointments[] = $this->freeAppointmentService->isAvailableAppointmentOrFail($requestedAppointmentStartHour->add($minutesToAdd), $schedule);
         }

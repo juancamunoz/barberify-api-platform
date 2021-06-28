@@ -30,7 +30,7 @@ class CreateAppointmentDTO implements RequestDTO
      * @Assert\NotBlank()
      * @Assert\DateTime()
      */
-    private ?DateTime $date;
+    private ?string $date;
 
     /**
      * @Assert\NotBlank()
@@ -41,36 +41,36 @@ class CreateAppointmentDTO implements RequestDTO
 
     public function __construct(Request $request)
     {
-        $data = json_decode($request, true);
+        $data = json_decode($request->getContent(), true);
 
         $this->ownerId = $data['owner'];
         $this->enterpriseId = $data['enterprise'];
         $this->scheduleId = $data['schedule'];
         $this->date = $data['date'];
-        $this->duration = $data['duration'];
+        $this->duration = (int) $data['duration'];
     }
 
-    public function getOwnerId()
+    public function getOwnerId(): string
     {
         return $this->ownerId;
     }
 
-    public function getEnterpriseId()
+    public function getEnterpriseId(): string
     {
         return $this->enterpriseId;
     }
 
-    public function getScheduleId()
+    public function getScheduleId(): string
     {
         return $this->scheduleId;
     }
 
-    public function getDate()
+    public function getDate(): DateTime
     {
-        return $this->date;
+        return new DateTime($this->date);
     }
 
-    public function getDuration()
+    public function getDuration(): int
     {
         return $this->duration;
     }

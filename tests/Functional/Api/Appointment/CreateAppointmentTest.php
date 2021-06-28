@@ -14,7 +14,7 @@ class CreateAppointmentTest extends AppointmentTestBase
             'owner' => $this->getPeterId(),
             'enterprise' => $this->getUserEnterpriseId(),
             'schedule' => $this->getUserEnterpriseScheduleId(),
-            'date' => '2021-06-14T10:00:00Z',
+            'date' => '2021-06-14 10:00:00',
             'duration' => 30
         ];
 
@@ -40,7 +40,7 @@ class CreateAppointmentTest extends AppointmentTestBase
             'owner' => 'wrong-id',
             'enterprise' => $this->getUserEnterpriseId(),
             'schedule' => $this->getUserEnterpriseScheduleId(),
-            'date' => '2021-06-14T10:00:00Z',
+            'date' => '2021-06-14 10:00:00',
             'duration' => 30
         ];
 
@@ -63,7 +63,7 @@ class CreateAppointmentTest extends AppointmentTestBase
             'owner' => $this->getPeterId(),
             'enterprise' => 'wrong-enterprise',
             'schedule' => $this->getUserEnterpriseScheduleId(),
-            'date' => '2021-06-14T10:00:00Z',
+            'date' => '2021-06-14 10:00:00',
             'duration' => 30
         ];
 
@@ -77,7 +77,7 @@ class CreateAppointmentTest extends AppointmentTestBase
         );
 
         $response = self::$peter->getResponse();
-        $this->assertEquals(JsonResponse::HTTP_NOT_FOUND, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testCreateAppointmentWithWrongSchedule(): void
@@ -86,7 +86,7 @@ class CreateAppointmentTest extends AppointmentTestBase
             'owner' => $this->getPeterId(),
             'enterprise' => $this->getUserEnterpriseId(),
             'schedule' => 'wrong-schedule',
-            'date' => '2021-06-14T10:00:00Z',
+            'date' => '2021-06-14 10:00:00',
             'duration' => 30
         ];
 
@@ -100,7 +100,7 @@ class CreateAppointmentTest extends AppointmentTestBase
         );
 
         $response = self::$peter->getResponse();
-        $this->assertEquals(JsonResponse::HTTP_NOT_FOUND, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testCreateAppointmentWithWrongDate(): void
@@ -132,7 +132,7 @@ class CreateAppointmentTest extends AppointmentTestBase
             'owner' => $this->getPeterId(),
             'enterprise' => $this->getUserEnterpriseId(),
             'schedule' => $this->getUserEnterpriseScheduleId(),
-            'date' => '2021-06-14T10:00:00Z',
+            'date' => '2021-06-14 10:00:00',
             'duration' => 'something-stupid'
         ];
 
