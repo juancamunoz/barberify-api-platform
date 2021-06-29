@@ -6,6 +6,7 @@ namespace App\Service\Appointment;
 
 use App\Entity\Appointment;
 use App\Entity\FreeAppointment;
+use App\Exception\Appointment\CannotDeleteAppointmentForAnotherUser;
 use App\Repository\AppointmentRepository;
 use App\Service\FreeAppointment\FreeAppointmentService;
 
@@ -20,9 +21,13 @@ class DeleteAppointmentService
         $this->freeAppointmentService = $freeAppointmentService;
     }
 
-    public function delete(string $appointmentId): void
+    public function delete(string $appointmentId, string $userId): void
     {
         $appointment = $this->appointmentRepository->findOneByIdOrFail($appointmentId);
+
+        if($appointment->getOwner()->getId() !== $userId){
+            throw new CannotDeleteAppointmentForAnotherUser();
+        }
 
         $this->reCreateFreeAppointments($appointment);
 

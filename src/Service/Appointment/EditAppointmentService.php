@@ -45,7 +45,7 @@ class EditAppointmentService
             $duration
         );
 
-        $this->deleteAppointmentService->delete($currentAppointment->getId());
+        $this->deleteAppointmentService->delete($currentAppointment->getId(), $userId);
 
         return $newAppointment;
     }
