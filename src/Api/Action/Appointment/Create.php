@@ -7,10 +7,6 @@ namespace App\Api\Action\Appointment;
 use App\Api\DTO\CreateAppointmentDTO;
 use App\Entity\Appointment;
 use App\Service\Appointment\CreateAppointmentService;
-use App\Service\Request\RequestService;
-use App\Value\Date;
-use App\Value\Number;
-use Symfony\Component\HttpFoundation\Request;
 
 class Create
 {

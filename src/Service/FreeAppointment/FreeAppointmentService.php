@@ -67,6 +67,12 @@ class FreeAppointmentService
         $this->entityManager->flush();
     }
 
+    public function createFreeAppointmentsFromRange(\DateTime $date, Schedule $schedule, \DateTime $from, \DateTime $to): void
+    {
+        $this->iterateAndAddFreeAppointmentFromRange($schedule, $date, $from, $to);
+        $this->entityManager->flush();
+    }
+
 
     private function getScheduleDetailsByDayName(Schedule $schedule, \DateTime $date): Collection
     {
@@ -83,6 +89,23 @@ class FreeAppointmentService
         $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
 
         for ($startHour = $scheduleDetail->getStartHour(); $startHour < $scheduleDetail->getEndHour();) {
+            $endHour = (clone $startHour)->add($minutesToAdd);
+            $freeAppointment = new FreeAppointment(
+                $schedule,
+                $date,
+                clone $startHour,
+                $endHour
+            );
+            $this->entityManager->persist($freeAppointment);
+            $startHour->add($minutesToAdd);
+        }
+    }
+
+    private function iterateAndAddFreeAppointmentFromRange(Schedule $schedule, \DateTime $date, \DateTime $from, \DateTime $to): void
+    {
+        $minutesToAdd = new \DateInterval('PT' . $schedule->getIntervalTime() . 'M');
+
+        for ($startHour = $from; $startHour < $to;) {
             $endHour = (clone $startHour)->add($minutesToAdd);
             $freeAppointment = new FreeAppointment(
                 $schedule,

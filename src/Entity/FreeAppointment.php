@@ -8,6 +8,8 @@ use Symfony\Component\Uid\Uuid;
 
 class FreeAppointment
 {
+    public const USED_DATE = '2020-01-01';
+
     private string $id;
     private Schedule $schedule;
     private \DateTime $date;

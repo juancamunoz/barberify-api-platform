@@ -11,7 +11,6 @@ use App\Repository\EnterpriseRepository;
 use App\Repository\ScheduleRepository;
 use App\Repository\UserRepository;
 use App\Service\FreeAppointment\FreeAppointmentService;
-use App\Value\Date;
 
 class CreateAppointmentService
 {
